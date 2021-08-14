@@ -6,13 +6,14 @@ vm : 构造出的vue实例的this
 
 - ```_init(options)``` 将```options```赋值到实例```$options```上，执行```initState(vm)```(init.js)
 
-## init.js初始化状态
+## init.js初始化
 
-- ```initState(vm)``` 获得配置项，如果有data配置项，执行```initData(vm)```对data进行初始化
+- ```initState(vm)``` 获得配置项，如果有data配置项，执行```initData(vm)```对data进行初始化(可能还有computed，methods)
 
 - ```initData(vm)```取到data，若data为函数则```call(vm)```绑定```this```,否则返回原来的```data```或者一个空对象。得到的结果赋值给```vm```上的```_data```与实例```$options```上的```data```后,对```data```中的值在```vm```中赋值键名并且代理访问
 
   ```          javascript
+  //这样 可以通过vm.xxx访问，而不是vm.data.xxx
   for (var key in data) {
     //proxy.js
     proxyData(vm, '_data', key)
@@ -50,7 +51,7 @@ vm : 构造出的vue实例的this
   - ```    javascript
             function observe(data) {
              //不是对象或者无数据，不观察
-            if (typeof data !== 'object' |    |     data === null) {
+            if (typeof data !== 'object' || data === null) {
                 return
             }
             //调用observer.js的观察者
