@@ -1,8 +1,12 @@
 import defineReactiveData from "./reactive"
-
+import { arrayMethods } from './array'
+import observeArray from "./observeArray"
 function Observer(data) {
   if (Array.isArray(data)) {
-    // console.log(`Auther :ZHY`)
+   data.__proto__ = arrayMethods
+
+   //传入的可能也是array
+   observeArray(data)
   } else {
     // console.log(`Auther :ZHY`)
     this.walk(data)

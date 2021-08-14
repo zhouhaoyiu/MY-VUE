@@ -4,5 +4,8 @@ var ARRAY_METHODS = [
   'shift',
   'unshift',
   'splice',
-  'sort'
+  'sort',
+  'reverse'
 ]
+
+export default ARRAY_METHODS

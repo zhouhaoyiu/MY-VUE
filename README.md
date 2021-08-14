@@ -59,7 +59,7 @@ vm : 构造出的vue实例的this
         ```
 
   - observer.js
-    - 若data为Array,进行处理,否则walk(data)
+    - 若data为Array,进行处理(array.js),否则walk(data)
     - walk(data)将data中的每一个
       key及其value取出,进行响应处理 (对value中的每个值也会走一遍响应式处理)```defineReactiveData(data, key, value)```
 
@@ -75,11 +75,62 @@ vm : 构造出的vue实例的this
             return value
           },
           set(newValue) {
+             console.log(`响应式设置${key}，`,newValue)
             if (newValue === value) {
               return
             }
+            //对新传入的数据也进行响应式处理
+            observe(newValue)
             value = newValue
           }
         })
       }
       ```
+
+  - array.js(处理数组，将操作Array方法中在config.js规定的方法指向自己写的方法)
+  
+    - ```javascript
+        //ARRAY_METHODS
+             'push',
+             'pop',
+             'shift',
+             'unshift',
+             'splice',
+             'sort',
+             'reverse'
+      ```
+
+    - ```javascript
+            var originArrayMethods = Arrayprototype
+            var arrayMethods = Object.creat(originArrayMethods)
+            
+            
+            // 将方法指向原来的方法，但是对传入参数进行响应处理
+            ARRAY_METHODS.map(function (method) {
+              arrayMethods[method] = function () {
+                var args = Array.prototype.slicecall(arguments)
+                //调用原本array的方法
+                var rt = originArrayMethod[method].apply(this, args)
+                console.log(arguments)
+                console.log(rt)
+                
+                var newArr
+                //响应式处理新传入的数据
+                switch (method) {
+                  case 'push':
+                  case 'unshift':
+                    newArr = args;
+                    break;
+                  case 'splice':
+                    // splice的第二项是配置项
+                    newArr = args.splice(2);
+                    break
+                  default:
+                    break;
+                }
+                newArr && observeArray(newArr)
+            
+                return rt
+              }
+            })
+        ```
