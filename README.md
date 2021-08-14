@@ -2,6 +2,8 @@
 
 vm : 构造出的vue实例的this
 
+为什么要有观察者? : 无法检测到数组内的改变
+
 ## index.js 定义Vue构造函数 进行初始化操作
 
 - ```_init(options)``` 将```options```赋值到实例```$options```上，执行```initState(vm)```(init.js)
@@ -60,7 +62,7 @@ vm : 构造出的vue实例的this
         ```
 
   - observer.js
-    - 若data为Array,进行处理(array.js),否则walk(data)
+    - 若data为Array,进行处理，将__proto__中加自己写的方法(array.js)并且将数组进行响应式处理(observerArray.js),否则walk(data)
     - walk(data)将data中的每一个
       key及其value取出,进行响应处理 (对value中的每个值也会走一遍响应式处理)```defineReactiveData(data, key, value)```
 
@@ -123,7 +125,7 @@ vm : 构造出的vue实例的this
                     newArr = args;
                     break;
                   case 'splice':
-                    // splice的第二项是配置项
+                    // splice的第三项是配置项
                     newArr = args.splice(2);
                     break
                   default:
